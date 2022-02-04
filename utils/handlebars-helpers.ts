@@ -1,3 +1,3 @@
 export const handlebarsHelpers = {
-    equals: (a, b) => a === b,
+    equals: (a: any, b: any): boolean => a === b,
 };

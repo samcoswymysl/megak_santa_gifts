@@ -1,4 +1,4 @@
-import {Router} from "express";
+import {Request, Response, Router} from "express";
 import {ChildRecord} from "../records/child.record";
 import {GiftRecord} from "../records/gift.record";
 import {ValidationError} from "../utils/errors";
@@ -7,7 +7,7 @@ export const childRouter = Router();
 
 childRouter // /child
 
-    .get('/', async (req, res) => {
+    .get('/', async (req: Request, res: Response): Promise<void> => {
         const childrenList = await ChildRecord.listAll();
         const giftsList = await GiftRecord.listAll();
 
@@ -17,14 +17,14 @@ childRouter // /child
         });
     })
 
-    .post('/', async (req, res) => {
+    .post('/', async (req: Request, res: Response): Promise<void> => {
         const newChild = new ChildRecord(req.body);
         await newChild.insert();
 
         res.redirect('/child');
     })
 
-    .patch('/gift/:childId', async (req, res) => {
+    .patch('/gift/:childId', async (req: Request, res: Response): Promise<void> => {
         const child = await ChildRecord.getOne(req.params.childId);
 
         if (child === null) {

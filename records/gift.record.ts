@@ -1,9 +1,16 @@
 import  {pool} from "../utils/db";
 import  {ValidationError} from "../utils/errors";
 import  {v4 as uuid} from "uuid";
+import {FieldPacket} from "mysql2";
+
+type GiftResult = [GiftRecord[], FieldPacket[]]
 
 export class GiftRecord {
-    constructor(obj) {
+    id?: string
+    name: string
+    count: number
+
+    constructor(obj: GiftRecord) {
         if (!obj.name || obj.name.length < 3 || obj.name.length > 55) {
             throw new ValidationError('Nazwa prezentu musi mieć od 3 do 55 znaków.');
         }
@@ -17,7 +24,7 @@ export class GiftRecord {
         this.count = obj.count;
     }
 
-    async insert() {
+    async insert(): Promise<string> {
         if (!this.id) {
             this.id = uuid();
         }
@@ -31,22 +38,22 @@ export class GiftRecord {
         return this.id;
     }
 
-    static async listAll() {
-        const [results] = await pool.execute("SELECT * FROM `gifts`");
+    static async listAll(): Promise<GiftRecord[]> {
+        const [results] = (await pool.execute("SELECT * FROM `gifts`")) as GiftResult
         return results.map(obj => new GiftRecord(obj));
     }
 
-    static async getOne(id) {
-        const [results] = await pool.execute("SELECT * FROM `gifts` WHERE `id` = :id", {
+    static async getOne(id: string): Promise<GiftRecord | null> {
+        const [results] = (await pool.execute("SELECT * FROM `gifts` WHERE `id` = :id", {
             id,
-        });
+        }))as GiftResult;
         return results.length === 0 ? null : new GiftRecord(results[0]);
     }
 
-    async countGivenGifts() {
-        const [[{count}]] /* answer[0][0].count */ = await pool.execute("SELECT COUNT(*) AS `count` FROM `children` WHERE `giftId` = :id", {
+    async countGivenGifts(): Promise<number> {
+        const [[{count}]]/* answer[0][0].count */ = (await pool.execute("SELECT COUNT(*) AS `count` FROM `children` WHERE `giftId` = :id", {
             id: this.id,
-        });
+        }))as GiftResult
         return count;
     }
 }

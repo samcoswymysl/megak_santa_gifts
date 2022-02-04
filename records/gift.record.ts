@@ -14,8 +14,7 @@ export class GiftRecord {
         if (!obj.name || obj.name.length < 3 || obj.name.length > 55) {
             throw new ValidationError('Nazwa prezentu musi mieć od 3 do 55 znaków.');
         }
-
-        if (!obj.count || obj.count < 1 || obj.count > 999999) {
+        if (!obj.count || obj.count < 0 || obj.count > 999999) {
             throw new ValidationError('Liczba szt. prezentu powinna się mieścić w przedziale 1 - 999999.');
         }
 

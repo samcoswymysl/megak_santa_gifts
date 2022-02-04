@@ -11,14 +11,16 @@ export class ChildRecord {
     public giftId : string | null
 
 
-    constructor( {name, id, giftId}: ChildRecord) {
-        if (name ||name.length < 3 ||name.length > 25) {
+    constructor( obj: ChildRecord) {
+
+
+        if (!obj.name ||obj.name.length < 3 ||obj.name.length > 25) {
             throw new ValidationError('Imię musi mieć od 3 do 25 znaków.');
         }
 
-        this.id =id;
-        this.name =name;
-        this.giftId =giftId;
+        this.id =obj.id;
+        this.name =obj.name;
+        this.giftId =obj.giftId;
     }
 
      async insert(): Promise<string> {
@@ -36,7 +38,6 @@ export class ChildRecord {
 
     static async listAll(): Promise<ChildRecord[]> {
         const [results] = (await pool.execute("SELECT * FROM `children` ORDER BY `name` ASC")) as ChildResult
-
         return results.map(obj => new ChildRecord(obj));
     }
 

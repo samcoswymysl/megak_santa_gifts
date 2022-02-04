@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.ts",
   "scripts": {
-    "mongo:start": "....",
-    "start": "npx nodemon index.ts"
+
+    "start": "ts-node index.ts",
+    "start:dev": "tsnd index.ts"
   },
   "keywords": [],
   "author": "",
